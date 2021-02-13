@@ -33,6 +33,7 @@ class LyricsEvents
 
 		// copy
 		LyricsEvents( const LyricsEvents& );
+        LyricsEvents& operator=( const LyricsEvents& );
 
 		// check
 		bool isEmpty() const;

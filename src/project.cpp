@@ -545,7 +545,7 @@ QByteArray Project::exportLyricsAsLRC1()
 				int minute, second, msecond;
 
 				splitTimeMark( lentry.timing, &minute, &second, &msecond );
-				timetag.sprintf( "%02d:%02d.%02d", minute, second, msecond / 10 );
+				timetag = QString::asprintf( "%02d:%02d.%02d", minute, second, msecond / 10 );
 
 				if ( pos == 0 )
 					lrc += "[" + timetag + "]";
@@ -614,7 +614,7 @@ QByteArray Project::exportLyricsAsLRC2()
 				int minute, second, msecond;
 
 				splitTimeMark( lentry.timing, &minute, &second, &msecond );
-				timetag.sprintf( "%02d:%02d.%02d", minute, second, msecond / 10 );
+				timetag = QString::asprintf( "%02d:%02d.%02d", minute, second, msecond / 10 );
 
 				if ( pos == 0 )
 					lrc += "[" + timetag + "]";

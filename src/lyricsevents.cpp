@@ -27,10 +27,10 @@
 
 enum
 {
-    TYPE_DEFAULT,
+	TYPE_DEFAULT,
 	TYPE_IMAGE,
 	TYPE_VIDEO,
-    TYPE_COLOR,
+	TYPE_COLOR,
 };
 
 LyricsEvents::LyricsEvents()
@@ -54,6 +54,21 @@ LyricsEvents::LyricsEvents( const LyricsEvents& ev )
 	m_nextUpdate = 0;
 	m_eventTiming = 0;
 }
+
+LyricsEvents& LyricsEvents::operator=( const LyricsEvents& ev )
+{
+	if(this != &ev) {
+		// We do not copy m_preparedEvents and m_cachedImage
+		m_events = ev.m_events;
+
+		m_lastUpdate = -1;
+		m_nextUpdate = 0;
+		m_eventTiming = 0;
+	}
+
+	return *this;
+}
+
 
 bool LyricsEvents::addEvent( qint64 timing, const QString& text )
 {
@@ -85,18 +100,18 @@ QString LyricsEvents::validateEvent( const QString& text )
 bool LyricsEvents::parseEvent( const QString& text, Event * event, QString * errmsg )
 {
 	QRegExp check("^(\\w+)=(.*)$");
-    QString key, value;
+	QString key, value;
 
-    if ( text.trimmed() != "DEFAULT" )
-    {
-        if ( text.trimmed().indexOf( check ) == -1 )
-            return "Invalid event format; must be like IMAGE=path";
+	if ( text.trimmed() != "DEFAULT" )
+	{
+		if ( text.trimmed().indexOf( check ) == -1 )
+			return "Invalid event format; must be like IMAGE=path";
 
-        key = check.cap( 1 );
-        value = check.cap( 2 );
-    }
-    else
-        key = text.trimmed();
+		key = check.cap( 1 );
+		value = check.cap( 2 );
+	}
+	else
+		key = text.trimmed();
 
 	if ( key == "IMAGE" )
 	{
@@ -160,34 +175,34 @@ bool LyricsEvents::parseEvent( const QString& text, Event * event, QString * err
 
 		return true;
 	}
-    else if ( key == "DEFAULT" )
-    {
-        if ( event )
-        {
-            event->type = TYPE_DEFAULT;
-            event->data.clear();
-        }
+	else if ( key == "DEFAULT" )
+	{
+		if ( event )
+		{
+			event->type = TYPE_DEFAULT;
+			event->data.clear();
+		}
 
-        return true;
-    }
-    else if ( key == "COLOR" )
-    {
-        if ( !QColor::isValidColor(value) )
-        {
-            if ( errmsg )
-                *errmsg = QString("Color %1 is not valid") .arg(value);
+		return true;
+	}
+	else if ( key == "COLOR" )
+	{
+		if ( !QColor::isValidColor(value) )
+		{
+			if ( errmsg )
+				*errmsg = QString("Color %1 is not valid") .arg(value);
 
-            return false;
-        }
+			return false;
+		}
 
-        if ( event )
-        {
-            event->type = TYPE_COLOR;
-            event->data = value;
-        }
+		if ( event )
+		{
+			event->type = TYPE_COLOR;
+			event->data = value;
+		}
 
-        return true;
-    }
+		return true;
+	}
 
 	if ( errmsg )
 		*errmsg = QString("Invalid event name '%1'") .arg(key);
@@ -221,29 +236,29 @@ bool LyricsEvents::prepare( QString * errmsg )
 				bgev = new BackgroundVideo( it.value().data );
 				break;
 
-            case TYPE_COLOR:
-                bgev = new BackgroundColor( it.value().data );
-                break;
+			case TYPE_COLOR:
+				bgev = new BackgroundColor( it.value().data );
+				break;
 
-            case TYPE_DEFAULT:
-                break;
+			case TYPE_DEFAULT:
+				break;
 
-            default:
-                continue;
+			default:
+				continue;
 		}
 
-        if ( bgev )
-        {
-            if ( !bgev->isValid() )
-            {
-                delete bgev;
+		if ( bgev )
+		{
+			if ( !bgev->isValid() )
+			{
+				delete bgev;
 
-                if ( errmsg )
-                    *errmsg = "Invalid event";
+				if ( errmsg )
+					*errmsg = "Invalid event";
 
-                return false;
-            }
-        }
+				return false;
+			}
+		}
 
 		m_preparedEvents[ it.key() ] = bgev;
 	}
@@ -295,8 +310,8 @@ void LyricsEvents::draw( qint64 timing, QImage& image )
 
 	Background * bg = found.value();
 
-    if ( !bg )
-        return;
+	if ( !bg )
+		return;
 
 	// Same event as before?
 	if ( found.key() != m_eventTiming )
@@ -315,7 +330,7 @@ void LyricsEvents::draw( qint64 timing, QImage& image )
 
 	if ( cache_changed || ( m_nextUpdate != -1 && ( m_nextUpdate == 0 || timing >= m_nextUpdate ) ) )
 	{
-        m_cachedImage = image;
+		m_cachedImage = image;
 		m_cachedImage.fill( 0 );
 		m_nextUpdate = bg->doDraw( m_cachedImage, timing - m_eventTiming );
 	}
